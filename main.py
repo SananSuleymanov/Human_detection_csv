@@ -51,7 +51,7 @@ class occupancy:
 
                     if self.difference == interval:
                         self.counter()
-                        print("s")
+                        print("The number of people is determined")
                         time1 = self.time2
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
