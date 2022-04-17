@@ -18,10 +18,11 @@ class occupancy:
         self.old_time =0
         self.current_time =0
         self.time2 =0
+        self.time1 =0
 
 
     def boxes(self, interval):
-        time1 = datetime.now()
+        self.time1 = datetime.now()
         while True:
             self.num = 0
             ret, image = cap.read()
@@ -38,21 +39,26 @@ class occupancy:
                             start_point = (xmin, ymin)
                             end_point = (xmax, ymax)
                             cv2.rectangle(image, start_point, end_point, (255, 0, 0), 2)
-                            cv2.imshow('Image', image)
-                            self.num += 1
-                            self.time2 = datetime.now()
-                            self.old_time = time1.strftime("%M")
-                            self.current_time = self.time2.strftime("%M")
 
-                            print("Old time: ", self.old_time)
-                            print("Current time: ", self.current_time)
-                            self.difference = int(self.current_time) - int(self.old_time)
-                            print("Difference: ", self.difference)
+                            self.num += 1
+
+                    self.time2 = datetime.now()
+                    self.old_time = self.time1.strftime("%M")
+                    self.current_time = self.time2.strftime("%M")
+
+                    print("Old time: ", self.old_time)
+                    print("Current time: ", self.current_time)
+                    if int(self.current_time) < int(self.old_time):
+                        self.difference = int(self.current_time) + (60 - int(self.old_time))
+                    else:
+                        self.difference = int(self.current_time) - int(self.old_time)
+                    print("Difference: ", self.difference)
+
+                    cv2.imshow('Image', image)
 
                     if self.difference == interval:
                         self.counter()
                         print("The number of people is determined")
-                        time1 = self.time2
                     if cv2.waitKey(1) & 0xFF == ord('q'):
                         break
                 except:
@@ -60,7 +66,7 @@ class occupancy:
     def counter(self):
         time_raw = datetime.now()
         times = time_raw.strftime("%d-%m-%Y %H:%M:%S")
-
+        self.time1 = self.time2
         i = 1
         print(self.num, times)
         data = [times, self.num]
@@ -70,8 +76,8 @@ class occupancy:
 
 
 
-while True:
-    occupant = occupancy()
-    occupant.boxes(5)
+#while True:
+    #occupant = occupancy()
+    #occupant.boxes(5)
 
 
